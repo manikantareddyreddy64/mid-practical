@@ -1,0 +1,42 @@
+
+name: HTML CSS JS CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Check Project Files
+        run: |
+          test -f index.html
+          test -f style.css
+          test -f script.js
+
+      - name: Build Website
+        run: |
+          mkdir -p dist
+          cp index.html style.css script.js dist/
+
+      - name: Test Website
+        run: |
+          test -f dist/index.html
+          test -f dist/style.css
+          test -f dist/script.js
+          grep -q 'style.css' dist/index.html
+          grep -q 'script.js' dist/index.html
+          echo "All tests passed!"
+
+      - name: Upload Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: website
+          path: dist/
